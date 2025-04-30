@@ -3,6 +3,7 @@ package flashcards
 import (
 	"encoding/csv"
 	"os"
+	"path/filepath"
 )
 
 type FlashCard struct {
@@ -56,19 +57,27 @@ func SaveFlashcards(path string, cards []FlashCard) error {
 }
 
 func EnsureCSVFile(path string) error {
-	os.MkdirAll("data", os.ModeAppend)
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		return err
+	}
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		file, err := os.Create(path)
+		file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+
 		if err != nil {
 			return err
 		}
-
 		defer file.Close()
 		writer := csv.NewWriter(file)
 		defer writer.Flush()
-		writer.Write([]string{"Question", "Answer", "RightOrWrong"})
-
+		if err := writer.Write([]string{"Question", "Answer", "RightOrWrong"}); err != nil {
+			return err
+		}
+	}
+	if err != nil {
+		return err
 	}
 	return nil
+
 }
