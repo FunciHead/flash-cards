@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -11,11 +9,14 @@ const READ = 0
 const CREATE = 1
 const UPDATE = 2
 const DELETE = 3
+const UPDATEQUESTIONS = 4
+const UPDATEANSWERS = 5
 
 type Model struct {
 	choices map[string][]string
 	cursor  int
 	mode    int
+	inMenu  bool
 }
 
 func InitialModel() Model {
@@ -23,12 +24,15 @@ func InitialModel() Model {
 		cursor: 0,
 		mode:   -1,
 		choices: map[string][]string{
-			"menu":   {"Start", "Create new flash card", "Edit flash cards", "Delete flash cards"},
-			"read":   {"Start"},
-			"update": getTheQuestions(initialize()),
-			"delete": getTheQuestions(initialize()),
-			"create": {"Create new flash card"},
+			"menu":            {"Start", "Create new flash card", "Edit flash cards", "Delete flash cards"},
+			"read":            {"Start"},
+			"update":          {"Update question", "Update answer"},
+			"delete":          getTheQuestions(initialize()),
+			"create":          {"Create new flash card"},
+			"updatequestions": getTheQuestions(initialize()),
+			"updateanswers":   getTheAnswers(initialize()),
 		},
+		inMenu: false,
 	}
 }
 
@@ -44,7 +48,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.mode == -1 {
 				return m, tea.Quit
 			} else {
-				m.mode = -1
+				returnButton(&m)
 			}
 
 		case "up", "k":
@@ -52,11 +56,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down", "j":
-			if m.cursor < len(m.choices)-2 {
+			if m.cursor < m.lenOfMenu() {
 				m.cursor++
 			}
 		case "enter":
-			m.changeMode(&m)
+			if m.mode == MENU {
+				mainMenu(&m)
+			}
+			if m.mode == UPDATE || m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
+				updateMenu(&m)
+			}
 		}
 	}
 	return m, nil
@@ -65,34 +74,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	switch m.mode {
 	case MENU:
-		return menu(&m, "menu")
+		return menuUpdateView(&m, "menu")
 	case READ:
-		return menu(&m, "read")
+		return menuUpdateView(&m, "read")
 	case UPDATE:
-		return menu(&m, "update")
+		return menuUpdateView(&m, "update")
 	case CREATE:
-		return menu(&m, "create")
+		return menuUpdateView(&m, "create")
 	case DELETE:
-		return menu(&m, "delete")
+		return menuUpdateView(&m, "delete")
+	case UPDATEQUESTIONS:
+		return menuUpdateView(&m, "updatequestions")
+	case UPDATEANSWERS:
+		return menuUpdateView(&m, "updateanswers")
 	}
-	return "p"
-}
-
-func menu(m *Model, key string) string {
-	s := "Flash card CLI\n"
-	if values, exists := m.choices[key]; exists {
-		for i, choices := range values {
-			cursor := " "
-			if m.cursor == i {
-				cursor = ">"
-			}
-			s += fmt.Sprintf("%s  %s\n", cursor, choices)
-		}
-	}
-	s += "Press \"q\" to quit"
-	return s
-}
-
-func (m Model) changeMode(me *Model) {
-	me.mode = m.cursor
+	return menuUpdateView(&m, "menu")
 }
