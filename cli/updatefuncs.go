@@ -29,7 +29,7 @@ func changeAQ(m *Model) {
 func changeAnswer(m *Model) {
 	answer := m.choices["updateanswers"][m.cursor]
 	answer += "!"
-	setAnswer(initialize(), answer, m.cursor)
+	setAnswerUpdate(initialize(), answer, m.cursor)
 	updateValuesAnswers(m)
 	m.mode = UPDATE
 	m.cursor = 1
@@ -39,7 +39,7 @@ func changeAnswer(m *Model) {
 func changeQuestion(m *Model) {
 	question := m.choices["updatequestions"][m.cursor]
 	question += "!" //temporary solution
-	setQuestion(initialize(), question, m.cursor)
+	setQuestionUpdate(initialize(), question, m.cursor)
 	updateValuesQuestions(m)
 	m.mode = UPDATE
 	m.cursor = 0

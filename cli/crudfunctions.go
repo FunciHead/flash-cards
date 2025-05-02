@@ -51,7 +51,7 @@ func mainMenu(m *Model) {
 }
 
 func returnButton(m *Model) {
-	if m.mode > 3 {
+	if m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
 		switch m.mode {
 		case UPDATEQUESTIONS:
 			m.cursor = 0

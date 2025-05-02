@@ -46,7 +46,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q":
+		case "ctrl+c", "q", "Q":
 			if m.mode == -1 {
 				return m, tea.Quit
 			} else {
@@ -69,8 +69,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				updateMenu(&m)
 			}
 			if m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
-
 				changeAQ(&m)
+			}
+			if m.mode == DELETE {
+				deleteMenu(&m)
 			}
 		}
 	}
