@@ -34,6 +34,10 @@ func (m Model) lenOfMenu() int {
 		length = len(m.choices["create"])
 	case DELETE:
 		length = len(m.choices["delete"])
+	case UPDATEQUESTIONS:
+		length = len(m.choices["updatequestions"])
+	case UPDATEANSWERS:
+		length = len(m.choices["updateanswers"])
 
 	}
 	return length - 1
@@ -47,50 +51,21 @@ func mainMenu(m *Model) {
 }
 
 func returnButton(m *Model) {
-
-	m.cursor = m.mode
-	m.mode = -1
-	m.inMenu = false
-}
-
-func updateMenu(m *Model) {
-	if m.inMenu {
-		if m.cursor == 0 {
-			m.mode = UPDATEQUESTIONS
-		} else {
-			m.mode = UPDATEANSWERS
+	if m.mode > 3 {
+		switch m.mode {
+		case UPDATEQUESTIONS:
+			m.cursor = 0
+		case UPDATEANSWERS:
+			m.cursor = 1
+		default:
+			m.cursor = 0
 		}
-		m.inMenu = false
-	} else {
+		m.mode = UPDATE
 		m.inMenu = true
+		m.inSubMenu = false
+	} else {
+		m.cursor = m.mode
+		m.mode = MENU
+		m.inMenu = false
 	}
-}
-
-func changeAnswer(m *Model) {
-	answer := m.choices["delete"][m.cursor]
-	answer += "zika"
-	setQuestion(initialize(), answer, m.cursor)
-	updateValuesAnswers(m)
-	m.mode = -1
-	m.inMenu = false
-}
-
-func changeQuestion(m *Model) {
-	question := m.choices["delete"][m.cursor]
-	question += "!" //temporary solution
-	setQuestion(initialize(), question, m.cursor)
-	updateValuesQuestions(m)
-	m.mode = -1
-	m.inMenu = false
-}
-
-func updateValuesQuestions(m *Model) {
-	flash := initialize()
-	m.choices["delete"] = getTheQuestions(flash)
-	m.choices["updatequestions"] = getTheQuestions(flash)
-}
-
-func updateValuesAnswers(m *Model) {
-	flash := initialize()
-	m.choices["updateanswers"] = getTheAnswers(flash)
 }

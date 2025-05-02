@@ -13,10 +13,11 @@ const UPDATEQUESTIONS = 4
 const UPDATEANSWERS = 5
 
 type Model struct {
-	choices map[string][]string
-	cursor  int
-	mode    int
-	inMenu  bool
+	choices   map[string][]string
+	cursor    int
+	mode      int
+	inMenu    bool
+	inSubMenu bool
 }
 
 func InitialModel() Model {
@@ -32,7 +33,8 @@ func InitialModel() Model {
 			"updatequestions": getTheQuestions(initialize()),
 			"updateanswers":   getTheAnswers(initialize()),
 		},
-		inMenu: false,
+		inMenu:    false,
+		inSubMenu: false,
 	}
 }
 
@@ -63,8 +65,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.mode == MENU {
 				mainMenu(&m)
 			}
-			if m.mode == UPDATE || m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
+			if m.mode == UPDATE {
 				updateMenu(&m)
+			}
+			if m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
+
+				changeAQ(&m)
 			}
 		}
 	}

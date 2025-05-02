@@ -21,7 +21,7 @@ func getTheQuestions(f flashcards.FlashCards) []string {
 func getTheAnswers(f flashcards.FlashCards) []string {
 	answers := []string{}
 	for _, item := range f.MyFlashCards {
-		answers = append(answers, item.Question)
+		answers = append(answers, item.Answer)
 	}
 	return answers
 }
