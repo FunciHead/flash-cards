@@ -4,7 +4,7 @@ func updateMenu(m *Model) {
 	if m.inMenu {
 		if m.cursor == 0 {
 			m.mode = UPDATEQUESTIONS
-		} else {
+		} else if m.cursor == 1 {
 			m.mode = UPDATEANSWERS
 		}
 		m.inMenu = false

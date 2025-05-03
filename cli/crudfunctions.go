@@ -4,6 +4,11 @@ import "fmt"
 
 func menuUpdateView(m *Model, key string) string {
 	s := "Flash card CLI\n"
+	if m.mode == GAME {
+		s += "   "
+		s += m.secretString
+		s += "\n"
+	}
 	if values, exists := m.choices[key]; exists {
 		for i, choices := range values {
 			cursor := " "
@@ -38,7 +43,8 @@ func (m Model) lenOfMenu() int {
 		length = len(m.choices["updatequestions"])
 	case UPDATEANSWERS:
 		length = len(m.choices["updateanswers"])
-
+	case GAME:
+		length = len(m.choices["game"])
 	}
 	return length - 1
 }
@@ -63,6 +69,12 @@ func returnButton(m *Model) {
 		m.mode = UPDATE
 		m.inMenu = true
 		m.inSubMenu = false
+	} else if m.mode == GAME {
+		m.cursor = 0
+		m.mode = READ
+		m.inMenu = true
+		m.inSubMenu = false
+		m.index = 0
 	} else {
 		m.cursor = m.mode
 		m.mode = MENU

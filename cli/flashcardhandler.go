@@ -36,6 +36,15 @@ func setAnswerUpdate(flashs flashcards.FlashCards, answer string, index int) {
 	flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)
 }
 
+func addFlashCard(flash flashcards.FlashCards, question string, answer string) {
+	flash.MyFlashCards = append(flash.MyFlashCards, flashcards.FlashCard{
+		Question:     question,
+		Answer:       answer,
+		RightOrWrong: "wrong",
+	})
+	flashcards.SaveFlashcards(pathToData, flash.MyFlashCards)
+}
+
 func flahsCardDelete(flashs flashcards.FlashCards, index int) {
 	flashs.MyFlashCards = append(flashs.MyFlashCards[:index], flashs.MyFlashCards[index+1:]...)
 	flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)

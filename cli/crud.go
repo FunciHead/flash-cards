@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"flash-cards/flashcards"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -11,13 +13,17 @@ const UPDATE = 2
 const DELETE = 3
 const UPDATEQUESTIONS = 4
 const UPDATEANSWERS = 5
+const GAME = 6
 
 type Model struct {
-	choices   map[string][]string
-	cursor    int
-	mode      int
-	inMenu    bool
-	inSubMenu bool
+	choices         map[string][]string
+	cursor          int
+	mode            int
+	inMenu          bool
+	inSubMenu       bool
+	index           int
+	secretString    string
+	flashcardsArray []flashcards.FlashCard
 }
 
 func InitialModel() Model {
@@ -32,9 +38,12 @@ func InitialModel() Model {
 			"create":          {"Create new flash card"},
 			"updatequestions": getTheQuestions(initialize()),
 			"updateanswers":   getTheAnswers(initialize()),
+			"game":            {"Show answer", "Hide answer", "Next Question", "Previous Question"},
 		},
-		inMenu:    false,
-		inSubMenu: false,
+		inMenu:       false,
+		inSubMenu:    false,
+		index:        0,
+		secretString: "",
 	}
 }
 
@@ -74,6 +83,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.mode == DELETE {
 				deleteMenu(&m)
 			}
+			if m.mode == CREATE {
+				CreateFlashCard(&m)
+			}
+			if m.mode == READ {
+				playFlashCards(&m)
+			}
+			if m.mode == GAME {
+				play(&m)
+			}
 		}
 	}
 	return m, nil
@@ -95,6 +113,8 @@ func (m Model) View() string {
 		return menuUpdateView(&m, "updatequestions")
 	case UPDATEANSWERS:
 		return menuUpdateView(&m, "updateanswers")
+	case GAME:
+		return menuUpdateView(&m, "game")
 	}
 	return menuUpdateView(&m, "menu")
 }
