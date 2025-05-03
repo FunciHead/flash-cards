@@ -20,6 +20,7 @@ func playFlashCards(m *Model) {
 
 func play(m *Model) {
 	output(m)
+
 	if m.inSubMenu {
 		switch m.cursor {
 		case 0:
@@ -42,7 +43,13 @@ func play(m *Model) {
 }
 func getInformation(m *Model) []flashcards.FlashCard {
 	flash := initializeAndRandomizeFlashcards()
+	value := flashcards.FlashCard{
+		Question:     "Finished press \"ENTER\" to go back!",
+		Answer:       "",
+		RightOrWrong: "wrong"}
+	flash = append(flash, value)
 	m.secretString = flash[m.index].Question
+
 	return flash
 }
 
