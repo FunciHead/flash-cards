@@ -3,6 +3,7 @@ package cli
 import (
 	"flash-cards/flashcards"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -24,6 +25,7 @@ type Model struct {
 	index           int
 	secretString    string
 	flashcardsArray []flashcards.FlashCard
+	textInput       textinput.Model
 }
 
 func InitialModel() Model {
@@ -48,7 +50,7 @@ func InitialModel() Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return textinput.Blink
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
