@@ -2,6 +2,7 @@ package cli
 
 func CreateFlashCard(m *Model) {
 	if m.inMenu {
+		m.inputing = true
 		create(m)
 	} else {
 		m.inMenu = true
@@ -10,9 +11,10 @@ func CreateFlashCard(m *Model) {
 
 func create(m *Model) {
 	flash := initialize()
-	//ti := textinput.New()
-	question := "la"
-	answer := "polizia"
+	m.submitted = m.textInput.Value()
+	question := m.submitted
+	m.textInput.SetValue("")
+	answer := "tu"
 	addFlashCard(flash, question, answer)
 	flash = initialize()
 	m.choices["delete"] = getTheQuestions(flash)

@@ -26,9 +26,15 @@ type Model struct {
 	secretString    string
 	flashcardsArray []flashcards.FlashCard
 	textInput       textinput.Model
+	inputing        bool
+	submitted       string
 }
 
 func InitialModel() Model {
+	ti := textinput.New()
+	ti.Placeholder = "Type here..."
+	ti.CharLimit = 400
+	ti.Width = 100
 	return Model{
 		cursor: 0,
 		mode:   -1,
@@ -37,7 +43,7 @@ func InitialModel() Model {
 			"read":            {"Start"},
 			"update":          {"Update question", "Update answer"},
 			"delete":          getTheQuestions(initialize()),
-			"create":          {"Create new flash card"},
+			"create":          {"Create new flash card:"},
 			"updatequestions": getTheQuestions(initialize()),
 			"updateanswers":   getTheAnswers(initialize()),
 			"game":            {"Show answer", "Hide answer", "Next Question", "Previous Question"},
@@ -46,6 +52,9 @@ func InitialModel() Model {
 		inSubMenu:    false,
 		index:        0,
 		secretString: "",
+		textInput:    ti,
+		inputing:     false,
+		submitted:    "",
 	}
 }
 
@@ -54,6 +63,8 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -64,11 +75,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				returnButton(&m)
 			}
 
-		case "up", "k":
+		case "up":
 			if m.cursor > 0 {
 				m.cursor--
 			}
-		case "down", "j":
+		case "down":
 			if m.cursor < m.lenOfMenu() {
 				m.cursor++
 			}
@@ -96,7 +107,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-	return m, nil
+	return m, cmd
 }
 
 func (m Model) View() string {

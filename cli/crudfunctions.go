@@ -4,21 +4,29 @@ import "fmt"
 
 func menuUpdateView(m *Model, key string) string {
 	s := "Flash card CLI\n"
-	if m.mode == GAME {
-		s += "   "
-		s += m.secretString
-		s += "\n"
-	}
-	if values, exists := m.choices[key]; exists {
-		for i, choices := range values {
-			cursor := " "
-			if m.cursor == i {
-				cursor = ">"
+	if !m.inputing {
+		if m.mode == GAME {
+			s += "   "
+			s += m.secretString
+			s += "\n"
+		}
+		if values, exists := m.choices[key]; exists {
+			for i, choices := range values {
+				cursor := " "
+				if m.cursor == i {
+					cursor = ">"
+				}
+				s += fmt.Sprintf("%s  %s\n", cursor, choices)
 			}
-			s += fmt.Sprintf("%s  %s\n", cursor, choices)
+		}
+		s += "Press \"q\" to quit"
+	} else {
+		m.textInput.Focus()
+		s += fmt.Sprintf("Type something and press enter: \n\n%s\n\n", m.textInput.View())
+		if m.submitted != "" {
+			s += fmt.Sprintf("you entered: %s", m.submitted)
 		}
 	}
-	s += "Press \"q\" to quit"
 	return s
 }
 
