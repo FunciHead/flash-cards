@@ -27,13 +27,17 @@ func getTheAnswers(f flashcards.FlashCards) []string {
 }
 
 func setQuestionUpdate(flashs flashcards.FlashCards, question string, index int) {
-	flashs.MyFlashCards[index].Question = question
-	flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)
+	if index >= 0 && index < len(flashs.MyFlashCards) {
+		flashs.MyFlashCards[index].Question = question
+		flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)
+	}
 }
 
 func setAnswerUpdate(flashs flashcards.FlashCards, answer string, index int) {
-	flashs.MyFlashCards[index].Answer = answer
-	flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)
+	if index >= 0 && index < len(flashs.MyFlashCards) {
+		flashs.MyFlashCards[index].Answer = answer
+		flashcards.SaveFlashcards(pathToData, flashs.MyFlashCards)
+	}
 }
 
 func addFlashCard(flash flashcards.FlashCards, question string, answer string) {

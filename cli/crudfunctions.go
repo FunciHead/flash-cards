@@ -22,9 +22,16 @@ func menuUpdateView(m *Model, key string) string {
 		s += "Press \"q\" to quit"
 	} else {
 		m.textInput.Focus()
-		s += fmt.Sprintf("Type something and press enter: \n\n%s\n\n", m.textInput.View())
-		if m.submitted != "" {
-			s += fmt.Sprintf("you entered: %s", m.submitted)
+		if m.mode == CREATE {
+			if m.submitted == "" {
+				s += fmt.Sprintf("Enter the question and press enter: \n\n%s\n\n", m.textInput.View())
+			} else {
+				s += fmt.Sprintf("Question: %s\nEnter the answer and press enter: \n\n%s\n\n", m.submitted, m.textInput.View())
+			}
+		} else if m.mode == UPDATEQUESTIONS {
+			s += fmt.Sprintf("Edit the question and press enter: \n\n%s\n\n", m.textInput.View())
+		} else if m.mode == UPDATEANSWERS {
+			s += fmt.Sprintf("Edit the answer and press enter: \n\n%s\n\n", m.textInput.View())
 		}
 	}
 	return s
@@ -54,7 +61,7 @@ func (m Model) lenOfMenu() int {
 	case GAME:
 		length = len(m.choices["game"])
 	}
-	return length - 1
+	return length
 }
 
 func mainMenu(m *Model) {

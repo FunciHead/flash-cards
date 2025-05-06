@@ -3,7 +3,9 @@ package cli
 func CreateFlashCard(m *Model) {
 	if m.inMenu {
 		m.inputing = true
-		create(m)
+		m.textInput.Focus()
+		m.textInput.SetValue("")
+		m.submitted = "" // Reset submitted value
 	} else {
 		m.inMenu = true
 	}
@@ -11,10 +13,19 @@ func CreateFlashCard(m *Model) {
 
 func create(m *Model) {
 	flash := initialize()
-	m.submitted = m.textInput.Value()
+
+	// If we haven't collected the question yet
+	if m.submitted == "" {
+		m.submitted = m.textInput.Value()
+		m.textInput.SetValue("")
+		return
+	}
+
+	// If we have the question, now collect the answer
 	question := m.submitted
+	answer := m.textInput.Value()
 	m.textInput.SetValue("")
-	answer := "tu"
+
 	addFlashCard(flash, question, answer)
 	flash = initialize()
 	m.choices["delete"] = getTheQuestions(flash)
@@ -23,5 +34,6 @@ func create(m *Model) {
 	m.cursor = CREATE
 	m.mode = MENU
 	m.inMenu = false
-
+	m.inputing = false
+	m.submitted = "" // Reset for next time
 }

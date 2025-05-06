@@ -5,6 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 const MENU = -1
@@ -35,6 +36,9 @@ func InitialModel() Model {
 	ti.Placeholder = "Type here..."
 	ti.CharLimit = 400
 	ti.Width = 100
+	ti.Focus()
+	ti.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	ti.TextStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("252"))
 	return Model{
 		cursor: 0,
 		mode:   -1,
@@ -65,6 +69,23 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
+	// Handle text input updates
+	if m.inputing {
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			if msg.String() == "enter" {
+				if m.mode == CREATE {
+					create(&m)
+				} else if m.mode == UPDATEQUESTIONS || m.mode == UPDATEANSWERS {
+					changeAQ(&m)
+				}
+				return m, cmd
+			}
+		}
+		m.textInput, cmd = m.textInput.Update(msg)
+		return m, cmd
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -80,7 +101,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down":
-			if m.cursor < m.lenOfMenu() {
+			if m.cursor < m.lenOfMenu()-1 {
 				m.cursor++
 			}
 		case "enter":
