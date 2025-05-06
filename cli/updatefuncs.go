@@ -3,15 +3,14 @@ package cli
 // updateMenu handles the initial selection between updating questions or answers
 func updateMenu(m *Model) {
 	if m.inMenu {
-		// Set the mode based on user selection (0 for questions, 1 for answers)
 		if m.cursor == 0 {
 			m.mode = UPDATEQUESTIONS
-		} else {
+			m.choices["updatequestions"] = getTheQuestions(initialize())
+		} else if m.cursor == 1 {
 			m.mode = UPDATEANSWERS
+			m.choices["updateanswers"] = getTheAnswers(initialize())
 		}
 		m.inMenu = false
-		m.inSubMenu = true
-		m.cursor = 0 // Reset cursor to start of list
 	} else {
 		m.inMenu = true
 	}
@@ -19,40 +18,50 @@ func updateMenu(m *Model) {
 
 // changeAQ handles the selection of which item to edit
 func changeAQ(m *Model) {
-	if !m.inSubMenu {
+	if m.inSubMenu {
+		if m.mode == UPDATEANSWERS {
+			changeAnswer(m)
+		} else {
+			changeQuestion(m)
+		}
+		m.inSubMenu = false
+	} else {
 		m.inSubMenu = true
-		return
 	}
+}
 
+func changeAnswer(m *Model) {
 	if !m.inputing {
 		m.inputing = true
 		m.textInput.Focus()
-
-		if m.mode == UPDATEQUESTIONS {
-			m.textInput.SetValue(m.choices["updatequestions"][m.cursor])
-		} else {
-			m.textInput.SetValue(m.choices["updateanswers"][m.cursor])
-		}
+		answer := m.choices["updateanswers"][m.cursor]
+		m.textInput.SetValue(answer)
 		return
 	}
 
-	// Save changes
-	flash := initialize()
-	if m.mode == UPDATEQUESTIONS {
-		setQuestionUpdate(flash, m.textInput.Value(), m.cursor)
-		updateValuesQuestions(m)
-		m.mode = UPDATE
-		m.cursor = 0
-	} else {
-		setAnswerUpdate(flash, m.textInput.Value(), m.cursor)
-		updateValuesAnswers(m)
-		m.mode = UPDATE
-		m.cursor = 1
+	setAnswerUpdate(initialize(), m.textInput.Value(), m.cursor)
+	updateValuesAnswers(m)
+	m.mode = UPDATE
+	m.cursor = 1
+	m.inMenu = true
+	m.inputing = false
+	m.textInput.SetValue("")
+}
+
+func changeQuestion(m *Model) {
+	if !m.inputing {
+		m.inputing = true
+		m.textInput.Focus()
+		question := m.choices["updatequestions"][m.cursor]
+		m.textInput.SetValue(question)
+		return
 	}
 
-	// Reset states
+	setQuestionUpdate(initialize(), m.textInput.Value(), m.cursor)
+	updateValuesQuestions(m)
+	m.mode = UPDATE
+	m.cursor = 0
 	m.inMenu = true
-	m.inSubMenu = false
 	m.inputing = false
 	m.textInput.SetValue("")
 }

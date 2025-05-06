@@ -73,17 +73,10 @@ func mainMenu(m *Model) {
 
 func returnButton(m *Model) {
 	if m.mode == UPDATEANSWERS || m.mode == UPDATEQUESTIONS {
-		switch m.mode {
-		case UPDATEQUESTIONS:
-			m.cursor = 0
-		case UPDATEANSWERS:
-			m.cursor = 1
-		default:
-			m.cursor = 0
-		}
 		m.mode = UPDATE
 		m.inMenu = true
 		m.inSubMenu = false
+		m.cursor = 0
 	} else if m.mode == GAME {
 		m.cursor = 0
 		m.mode = READ

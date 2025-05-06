@@ -101,7 +101,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down":
-			if m.cursor < m.lenOfMenu()-1 {
+			menuLength := m.lenOfMenu()
+			if m.cursor < menuLength-1 {
 				m.cursor++
 			}
 		case "enter":
