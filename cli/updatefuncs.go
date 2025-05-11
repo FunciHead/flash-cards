@@ -24,7 +24,6 @@ func changeAQ(m *Model) {
 		} else {
 			changeQuestion(m)
 		}
-		m.inSubMenu = false
 	} else {
 		m.inSubMenu = true
 	}
@@ -46,6 +45,8 @@ func changeAnswer(m *Model) {
 	m.inMenu = true
 	m.inputing = false
 	m.textInput.SetValue("")
+	m.inSubMenu = false
+
 }
 
 func changeQuestion(m *Model) {
@@ -64,6 +65,8 @@ func changeQuestion(m *Model) {
 	m.inMenu = true
 	m.inputing = false
 	m.textInput.SetValue("")
+	m.inSubMenu = false
+
 }
 
 // updateValuesQuestions updates the question-related choices in the menu
